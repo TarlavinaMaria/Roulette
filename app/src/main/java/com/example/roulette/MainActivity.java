@@ -1,6 +1,8 @@
 package com.example.roulette;
 
+import android.graphics.Color;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
@@ -10,6 +12,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -41,6 +45,10 @@ public class MainActivity extends AppCompatActivity {
     // Массив красных чисел на рулетке
     final int[] redNumbers = {32, 19, 21, 25, 34, 27, 36, 30, 23, 5, 16, 1, 14, 9, 18, 7, 12, 3};
 
+    // Объявление переменных для таблицы результатов
+    private TableLayout resultsTable;
+    private int spinCount = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
         colorGroup = findViewById(R.id.colorGroup);
         betRed = findViewById(R.id.betRed);
         betBlack = findViewById(R.id.betBlack);
+        resultsTable = findViewById(R.id.resultsTable);
 
         balanceText.setText("Баланс: " + balance);
 
@@ -165,6 +174,76 @@ public class MainActivity extends AppCompatActivity {
         imageView.startAnimation(rotate);
     }
 
+    private void addResultToTable(int resultNumber, boolean isRed, boolean isBlack, int betAmount, int winnings) {
+        spinCount++;
+
+        TableRow row = new TableRow(this);
+        row.setLayoutParams(new TableRow.LayoutParams(
+                TableRow.LayoutParams.MATCH_PARENT,
+                TableRow.LayoutParams.WRAP_CONTENT));
+
+        // № крутки
+        TextView spinNumber = createTableCell(String.valueOf(spinCount));
+
+        // Выпавшее число
+        TextView number = createTableCell(String.valueOf(resultNumber));
+
+        // Цвет
+        TextView color = new TextView(this);
+        if (resultNumber == 0) {
+            color.setText("Зеленый");
+            color.setTextColor(Color.GREEN);
+        } else if (isRed) {
+            color.setText("Красный");
+            color.setTextColor(Color.RED);
+        } else {
+            color.setText("Черный");
+            color.setTextColor(Color.BLACK);
+        }
+        color = styleTableCell(color);
+
+        // Сумма ставки
+        TextView bet = createTableCell(betAmount + "$");
+
+        // Результат
+        TextView result = new TextView(this);
+        if (winnings > 0) {
+            result.setText("+" + winnings + "$");
+            result.setTextColor(Color.GREEN);
+        } else {
+            result.setText("-" + betAmount + "$");
+            result.setTextColor(Color.RED);
+        }
+        result = styleTableCell(result);
+
+        // Добавляем ячейки в строку
+        row.addView(spinNumber);
+        row.addView(number);
+        row.addView(color);
+        row.addView(bet);
+        row.addView(result);
+
+        // Добавляем строку в таблицу
+        resultsTable.addView(row);
+
+        // Ограничиваем количество записей (например, 20)
+        if (resultsTable.getChildCount() > 20) {
+            resultsTable.removeViewAt(1); // Удаляем самую старую запись (после заголовка)
+        }
+    }
+
+    private TextView createTableCell(String text) {
+        TextView textView = new TextView(this);
+        textView.setText(text);
+        return styleTableCell(textView);
+    }
+
+    private TextView styleTableCell(TextView textView) {
+        textView.setGravity(Gravity.CENTER);
+        textView.setPadding(5, 5, 5, 5);
+        return textView;
+    }
+
     private void showResult(int betNumber, int betAmount, boolean betOnRed, boolean betOnBlack) {
         // Вычисляем выпавшее число (0-36)
         int resultNumber = (36 - (lastDegree / 10)) % 37;
@@ -201,6 +280,9 @@ public class MainActivity extends AppCompatActivity {
         } else {
             resultMessage += "\nВы проиграли ставку";
         }
+
+        // Добавляем запись в таблицу результатов
+        addResultToTable(resultNumber, isRed, isBlack, betAmount, winnings);
 
         // Сброс полей для новой ставки
         betInput.setText("");

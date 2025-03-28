@@ -71,5 +71,52 @@
         android:textSize="18sp"
         android:layout_marginTop="10dp" />
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_marginTop="10dp">
 
+        <TableLayout
+            android:id="@+id/resultsTable"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:stretchColumns="*"
+            android:background="#f0f0f0">
+
+            <TableRow
+                android:background="#6200EE"
+                android:padding="5dp">
+
+                <TextView
+                    android:text="№"
+                    android:textColor="#FFFFFF"
+                    android:textStyle="bold"
+                    android:gravity="center" />
+
+                <TextView
+                    android:text="Число"
+                    android:textColor="#FFFFFF"
+                    android:textStyle="bold"
+                    android:gravity="center" />
+
+                <TextView
+                    android:text="Цвет"
+                    android:textColor="#FFFFFF"
+                    android:textStyle="bold"
+                    android:gravity="center" />
+
+                <TextView
+                    android:text="Ставка"
+                    android:textColor="#FFFFFF"
+                    android:textStyle="bold"
+                    android:gravity="center" />
+
+                <TextView
+                    android:text="Результат"
+                    android:textColor="#FFFFFF"
+                    android:textStyle="bold"
+                    android:gravity="center" />
+            </TableRow>
+        </TableLayout>
+    </ScrollView>
 </LinearLayout>
